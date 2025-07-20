@@ -1,15 +1,20 @@
 import Plan from '../models/Plan.js';
+import { errorRes, successRes } from '../utils/helper.js';
 
 export const createPlan = async (req, res) => {
   try {
     const plan = await Plan.create(req.body);
-    res.status(201).json(plan);
+    return res.status(201).json({ message: 'Plan created successfully.', data: plan });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return errorRes(res, { error: err });
   }
 };
 
 export const getPlans = async (req, res) => {
-  const plans = await Plan.find();
-  res.json(plans);
+  try {
+    const plans = await Plan.find();
+    return successRes(res, plans);
+  } catch (error) {
+    return errorRes(res, { error: err });
+  }
 };
