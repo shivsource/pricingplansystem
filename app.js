@@ -1,21 +1,26 @@
-import express from 'express';
 import dotenv from 'dotenv';
-import './config/mongoose.js';
-import authMiddleware from './utils/authMiddleware.js';
+dotenv.config();
+import express from 'express';
+import connectDb from './config/mongoose.js';
+connectDb();
+import authMiddleware, { checkIfAdmin, validateToken } from './utils/authMiddleware.js';
 
+import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import userRoutes from './routes/user.js';
 import usageRoutes from './routes/usage.js';
 
-dotenv.config();
-
 const app = express();
+app.get('/', (req, res) => {
+    return res.status(200).send(`${Math.floor(Date.now() / 1000)}`);
+});
 app.use(express.json());
-app.use(authMiddleware);
+app.use('/auth', authRoutes);
+// app.use(authMiddleware);
 
-app.use('/admin', adminRoutes);
-app.use('/users', userRoutes);
-app.use('/files', usageRoutes);
-app.use('/messages', usageRoutes);
+app.use('/admin', validateToken, checkIfAdmin, adminRoutes);
+app.use('/users', validateToken, userRoutes);
+// app.use('/files', usageRoutes);
+// app.use('/messages', usageRoutes);
 
 export default app;
