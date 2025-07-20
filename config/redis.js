@@ -3,5 +3,5 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const client = createClient({ url: process.env.REDIS_URL });
-client.connect();
+// client.connect();
 export default client;
